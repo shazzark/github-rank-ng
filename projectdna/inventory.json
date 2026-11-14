@@ -1,0 +1,138 @@
+{
+    "schema_version":  1,
+    "generated_local":  "2026-11-14T17:40:16.3212217+01:00",
+    "root":  "C:/Users/chido/Developer/github-rank-ng",
+    "git":  null,
+    "file_count":  30,
+    "truncated":  false,
+    "metadata_only":  true,
+    "secret_exclusions":  [
+                              ".env",
+                              ".env.*",
+                              ".npmrc",
+                              "credential files",
+                              "private directories"
+                          ],
+    "files":  [
+                  {
+                      "path":  ".ejscrc.json",
+                      "bytes":  129
+                  },
+                  {
+                      "path":  ".gitignore",
+                      "bytes":  185
+                  },
+                  {
+                      "path":  "ARCHITECTURE.md",
+                      "bytes":  2953
+                  },
+                  {
+                      "path":  "FEATURE_INVENTORY.md",
+                      "bytes":  4832
+                  },
+                  {
+                      "path":  "IMPLEMENTATION_PLAN.md",
+                      "bytes":  2884
+                  },
+                  {
+                      "path":  "LICENSE",
+                      "bytes":  1072
+                  },
+                  {
+                      "path":  "package-lock.json",
+                      "bytes":  30709
+                  },
+                  {
+                      "path":  "package.json",
+                      "bytes":  791
+                  },
+                  {
+                      "path":  "PROJECT_OVERVIEW.md",
+                      "bytes":  1830
+                  },
+                  {
+                      "path":  "README.md",
+                      "bytes":  3650
+                  },
+                  {
+                      "path":  "TASKS.md",
+                      "bytes":  2342
+                  },
+                  {
+                      "path":  "tsconfig.json",
+                      "bytes":  391
+                  },
+                  {
+                      "path":  ".github/workflows/ci.yml",
+                      "bytes":  342
+                  },
+                  {
+                      "path":  ".github/workflows/refresh.yml",
+                      "bytes":  720
+                  },
+                  {
+                      "path":  "projectdna/DECISIONS.md",
+                      "bytes":  2624
+                  },
+                  {
+                      "path":  "projectdna/inventory.json",
+                      "bytes":  4516
+                  },
+                  {
+                      "path":  "projectdna/reference-inventory.json",
+                      "bytes":  2810
+                  },
+                  {
+                      "path":  "projectdna/VERIFICATION.md",
+                      "bytes":  7811
+                  },
+                  {
+                      "path":  "src/getUserInfo.ts",
+                      "bytes":  215
+                  },
+                  {
+                      "path":  "src/getUsers.ts",
+                      "bytes":  231
+                  },
+                  {
+                      "path":  "src/getUsersNigeria.ts",
+                      "bytes":  233
+                  },
+                  {
+                      "path":  "src/pipeline.ts",
+                      "bytes":  12500
+                  },
+                  {
+                      "path":  "src/common/props.ts",
+                      "bytes":  604
+                  },
+                  {
+                      "path":  "src/utils/index.ts",
+                      "bytes":  6301
+                  },
+                  {
+                      "path":  "template/index.ejs",
+                      "bytes":  475
+                  },
+                  {
+                      "path":  "template/users.nigeria.ejs",
+                      "bytes":  532
+                  },
+                  {
+                      "path":  "template/_partial/footer.ejs",
+                      "bytes":  628
+                  },
+                  {
+                      "path":  "template/_partial/header.ejs",
+                      "bytes":  7397
+                  },
+                  {
+                      "path":  "template/_partial/user_table.ejs",
+                      "bytes":  2102
+                  },
+                  {
+                      "path":  "tests/pipeline.test.mjs",
+                      "bytes":  7163
+                  }
+              ]
+}

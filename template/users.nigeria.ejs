@@ -1,0 +1,11 @@
+<%- include('./_partial/header', {
+  type: 'nigeria',
+  title: 'GitHub developers in Nigeria',
+  description: 'A community leaderboard of public GitHub profiles whose self-reported location matches Nigeria or a Nigerian city, ranked by followers. Location is not proof of nationality or residence.',
+  users: USERS_NIGERIA
+}); %>
+<%- include('./_partial/user_table', {
+  users: USERS_NIGERIA,
+  searchUrl: 'https://github.com/search?q=followers%3A%3E%3D100+location%3ANigeria&type=Users'
+}); %>
+<%- include('./_partial/footer'); %>

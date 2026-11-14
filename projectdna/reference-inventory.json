@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "generated_local": "2026-11-14T14:52:09.445Z",
+  "root": "C:/Users/chido/Developer/cloned-project/github-rank-reference",
+  "git": {
+    "commit": "c9f1896064b4e813d2f6c813efb675f7d85974a4",
+    "branch": "master",
+    "dirty": false
+  },
+  "file_count": 33,
+  "truncated": false,
+  "metadata_only": true,
+  "secret_exclusions": [
+    ".env",
+    ".env.*",
+    ".npmrc",
+    "credential files",
+    "private directories"
+  ],
+  "files": [
+    {
+      "path": ".ejscrc.json",
+      "bytes": 415
+    },
+    {
+      "path": ".github/FUNDING.yml",
+      "bytes": 118
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 4824
+    },
+    {
+      "path": ".github/workflows/ci3.yml",
+      "bytes": 1414
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 200
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1072
+    },
+    {
+      "path": "package.json",
+      "bytes": 1679
+    },
+    {
+      "path": "README-zh.md",
+      "bytes": 14817
+    },
+    {
+      "path": "README.md",
+      "bytes": 14913
+    },
+    {
+      "path": "renovate.json",
+      "bytes": 139
+    },
+    {
+      "path": "src/common/props.ts",
+      "bytes": 599
+    },
+    {
+      "path": "src/getRepos.ts",
+      "bytes": 1959
+    },
+    {
+      "path": "src/getTrending.ts",
+      "bytes": 867
+    },
+    {
+      "path": "src/getUserInfo.ts",
+      "bytes": 2164
+    },
+    {
+      "path": "src/getUsers.ts",
+      "bytes": 1404
+    },
+    {
+      "path": "src/getUsersChina.ts",
+      "bytes": 1434
+    },
+    {
+      "path": "src/utils/index.ts",
+      "bytes": 7371
+    },
+    {
+      "path": "src/utils/saveData.ts",
+      "bytes": 215
+    },
+    {
+      "path": "src/utils/saveUsersData.ts",
+      "bytes": 4525
+    },
+    {
+      "path": "template/_partial/footer.ejs",
+      "bytes": 1226
+    },
+    {
+      "path": "template/_partial/header.ejs",
+      "bytes": 13364
+    },
+    {
+      "path": "template/_partial/trending_list.ejs",
+      "bytes": 2359
+    },
+    {
+      "path": "template/_partial/trending_nav.ejs",
+      "bytes": 335
+    },
+    {
+      "path": "template/_partial/users_list.ejs",
+      "bytes": 2602
+    },
+    {
+      "path": "template/_partial/users_nav.ejs",
+      "bytes": 1844
+    },
+    {
+      "path": "template/index.ejs",
+      "bytes": 685
+    },
+    {
+      "path": "template/org.ejs",
+      "bytes": 688
+    },
+    {
+      "path": "template/repos.ejs",
+      "bytes": 1450
+    },
+    {
+      "path": "template/trending-monthly.ejs",
+      "bytes": 375
+    },
+    {
+      "path": "template/trending-weekly.ejs",
+      "bytes": 373
+    },
+    {
+      "path": "template/trending.ejs",
+      "bytes": 371
+    },
+    {
+      "path": "template/users.china.ejs",
+      "bytes": 720
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 368
+    }
+  ]
+}

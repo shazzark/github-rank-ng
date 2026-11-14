@@ -1,0 +1,11 @@
+<%- include('./_partial/header', {
+  type: 'global',
+  title: 'GitHub developers, ranked globally',
+  description: 'Explore public GitHub profiles from around the world, ordered by follower count. Switch to the Nigeria leaderboard to discover developers in the local community.',
+  users: USERS
+}); %>
+<%- include('./_partial/user_table', {
+  users: USERS,
+  searchUrl: 'https://github.com/search?q=followers%3A%3E1000&type=Users'
+}); %>
+<%- include('./_partial/footer'); %>

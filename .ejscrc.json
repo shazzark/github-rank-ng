@@ -1,0 +1,6 @@
+{
+  "data": {
+    "template/index.ejs": "./dist/users.json",
+    "template/users.nigeria.ejs": "./dist/users.nigeria.json"
+  }
+}
