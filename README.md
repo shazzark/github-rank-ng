@@ -2,7 +2,7 @@
 
 A static ranking of public GitHub developer profiles, focused on Nigeria, with a global leaderboard. The site uses GitHub Search results and public profile data; it does not create, estimate, or fill in ranking records.
 
-This independent Nigeria-focused adaptation retains the TypeScript, Node.js and EJS approach of [jaywcjlove/github-rank](https://github.com/jaywcjlove/github-rank). The original project and its contributors are credited; see the retained [MIT license](LICENSE).
+[Repository](https://github.com/shazzark/github-rank-ng) · [Global leaderboard](https://shazzark.github.io/github-rank-ng/) · [Nigeria leaderboard](https://shazzark.github.io/github-rank-ng/users.nigeria.html)
 
 ## Requirements
 
@@ -39,8 +39,8 @@ Nigeria discovery searches `location:Nigeria` and a maintained set of Nigerian c
 
 GitHub profile location is self-reported and free text. City matches can include people who are not Nigerian, and Nigerian developers may omit a location or use an unsearched spelling. The ranking is discovery, not proof of nationality, residence, or a complete census. The result list contains only profiles returned by GitHub and successfully enriched from its public profile API.
 
-Open `web/index.html` locally after `npm start`. The refresh workflow runs every seven days and uploads a build artifact. It does not deploy or push generated data. API search requests are paced, incomplete results are retried, and rate-limit responses honor GitHub retry hints; if a refresh is interrupted, cached candidates and completed profiles let it resume.
+Open `web/index.html` locally after `npm start`. Pushes to `main`, manual runs, and the seven-day scheduled refresh publish the generated `web/` directory through GitHub Pages. Configure the `ACCESS_TOKEN` Actions secret for live profile enrichment. The workflow validates both ranking JSON files before uploading the site artifact; it never publishes `.env`, caches, or source files as website content. API search requests are paced, incomplete results are retried, and rate-limit responses honor GitHub retry hints; if a refresh is interrupted, cached candidates and completed profiles let it resume.
 
 ## License and attribution
 
-This repository preserves the MIT license and attribution for the original project: [jaywcjlove/github-rank](https://github.com/jaywcjlove/github-rank). This adaptation is not an official upstream release.
+This project is licensed under MIT. The original copyright and license notice is preserved in [LICENSE](LICENSE).

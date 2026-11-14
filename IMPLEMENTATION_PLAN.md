@@ -2,7 +2,7 @@
 
 ## Scope and success criteria
 
-Use the reference at `c9f1896064b4e813d2f6c813efb675f7d85974a4` as read-only evidence. Keep TypeScript, Node.js, EJS, global user ranking, and required attribution. Replace the China dataset/page with Nigeria; do not invent or ship ranking records. No push, deployment, npm publication, release, tag, or automated Git write.
+Use the reference at `c9f1896064b4e813d2f6c813efb675f7d85974a4` as read-only evidence. Keep TypeScript, Node.js, EJS, global user ranking, and required MIT notices. Replace the China dataset/page with Nigeria; do not invent or ship ranking records. The owner has authorized a verified push to `main` and GitHub Pages deployment; npm publication, release/tag creation, and generated-data Git writes remain disabled.
 
 ## Phases and gates
 
@@ -21,4 +21,4 @@ Use the reference at `c9f1896064b4e813d2f6c813efb675f7d85974a4` as read-only evi
 
 ## Discovery expansion delivery
 
-The follow-up discovery phase is implemented and verified. The previous query reproduced 14 complete results on the current API; historical response metadata was unavailable, so the old run cannot be reconstructed exactly. The broadened pipeline uses configurable thresholds, Nigeria and city-location queries, metadata-based pagination, bounded retry/backoff, incomplete-result rejection, search checkpoints, ID/login deduplication, stable ranking, and profile enrichment. Six fixture tests pass. The live refresh generated 768 global and 700 Nigeria profiles; both EJS pages were generated and the Nigeria page was checked in desktop and mobile browsers. The local review and focused commit are the remaining delivery steps. No push or deployment is authorized.
+The discovery phase is implemented and verified. The prior query reproduces 14 complete results on the current API, while historical response metadata is unavailable. The live data run generated 768 global and 700 Nigeria profiles. The current follow-up removes public upstream promotion and deploys only `web/` through GitHub Pages; the seven-day refresh calls the same serialized workflow.

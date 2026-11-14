@@ -1,4 +1,6 @@
 <!doctype html>
+<% const pageFile = type === 'nigeria' ? 'users.nigeria.html' : 'index.html'; %>
+<% const pageUrl = `https://shazzark.github.io/github-rank-ng/${pageFile}`; %>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -6,6 +8,12 @@
     <title><%= title %> | GitHub Rank NG</title>
     <meta name="description" content="<%= description %>" />
     <meta name="theme-color" content="#f5f7f3" />
+    <meta property="og:site_name" content="GitHub Rank NG" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<%= title %> | GitHub Rank NG" />
+    <meta property="og:description" content="<%= description %>" />
+    <meta property="og:url" content="<%= pageUrl %>" />
+    <link rel="canonical" href="<%= pageUrl %>" />
     <style>
       :root {
         color-scheme: light;

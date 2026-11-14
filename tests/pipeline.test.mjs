@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -149,4 +150,27 @@ test('enrichment resumes after interruption and ranks deterministically with con
 
 test('identity deduplication uses stable IDs and normalized logins', () => {
   assert.deepEqual(uniqueUsers([searchUser('Ada', 1), searchUser('renamed', 1), searchUser('ada', 3)]).map(({ login }) => login), ['Ada']);
+});
+
+test('deployment verifier accepts real-shaped ranking output and rejects empty datasets', async () => {
+  const rootDir = await tempProject();
+  const verifier = path.resolve('scripts/verify-rankings.mjs');
+  try {
+    await mkdir(path.join(rootDir, 'dist'), { recursive: true });
+    const users = [profile('first', 1, 100), profile('second', 2, 90)]
+      .map((user, index) => ({ ...user, rank: index + 1 }));
+    await writeFile(path.join(rootDir, 'dist/users.json'), JSON.stringify(users));
+    await writeFile(path.join(rootDir, 'dist/users.nigeria.json'), JSON.stringify(users));
+
+    const valid = spawnSync(process.execPath, [verifier], { cwd: rootDir, encoding: 'utf8' });
+    assert.equal(valid.status, 0, valid.stderr);
+    assert.match(valid.stdout, /Verified 2 profiles/);
+
+    await writeFile(path.join(rootDir, 'dist/users.nigeria.json'), '[]');
+    const empty = spawnSync(process.execPath, [verifier], { cwd: rootDir, encoding: 'utf8' });
+    assert.notEqual(empty.status, 0);
+    assert.match(empty.stderr, /must contain at least one verified profile/);
+  } finally {
+    await rm(rootDir, { recursive: true, force: true });
+  }
 });

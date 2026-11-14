@@ -29,8 +29,8 @@ flowchart LR
 - Persistence: local JSON files only. `.cache/` holds resumable raw candidates; `dist/` holds enriched ranking data; `web/` holds generated HTML.
 - UI: EJS templates and shared partials, with no runtime server or browser-side data fetch.
 - Data interpretation: the `location` field is user-supplied. City-name matches are search signals only and do not prove nationality or current residence.
-- Automation: push/pull-request CI builds only. Scheduled refresh has repository read permission, reads `ACCESS_TOKEN`, and uploads a workflow artifact; it does not change branches or publish/deploy.
+- Automation: push/pull-request CI tests the project. Pushes to `main`, manual deployments, and the existing seven-day schedule use one serialized Pages workflow. The workflow reads `ACCESS_TOKEN`, regenerates and validates ranking data, and uploads only `web/` as the Pages artifact; it does not publish packages or write generated files to Git.
 
 ## Differences from the reference
 
-The target replaces the China-specific page/data with Nigeria and focuses navigation on global/Nigeria users. The source's repository, organization, and trending scrapers and pages are not part of this focused adaptation. The original project remains credited in `README.md` and the MIT license is retained.
+The target replaces the China-specific page/data with Nigeria and focuses navigation on global/Nigeria users. The source's repository, organization, and trending scrapers and pages are not part of this focused adaptation. Historical source provenance is recorded in the ProjectDNA files; the original MIT copyright and license text remains in `LICENSE`.

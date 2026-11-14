@@ -11,6 +11,8 @@
 | T07 | Install, compile, run fixture pipeline, try live fetch, generate and inspect HTML | F01â€“F05 | Complete | npm install/ci, build, fixture recovery, live API, EJS, browser checks passed; Actions runtime not run |
 | T08 | Reproduce the old 14-profile query and inspect search metadata | F07 | Complete | Current exact old query: 14 complete results; old response metadata was not retained |
 | T09 | Implement multi-location search, configurable thresholds, pagination, retry, and identity deduplication | F02, F03, F07 | Complete | Metadata pagination, retry and incomplete-result handling, per-page search checkpoints, ID/login dedupe, deterministic follower ranks |
-| T10 | Add unit/integration tests and update workflow test gate | F03, F07 | Complete | `npm test`: 6 Node built-in fixture tests passed; CI invokes the same gate |
+| T10 | Add unit/integration tests and update workflow test gate | F03, F07, F05 | Complete | `npm test`: 7 Node built-in fixture tests passed, including empty-ranking deployment guard; CI invokes the same gate |
 | T11 | Update location disclosure, documentation, live data, and responsive verification | F02, F04, F07 | Complete | Live output: 768 global and 700 Nigeria profiles; JSON integrity and 1440/390px Playwright checks passed |
-| T12 | Review, inspect staged files, and create one local commit | All | Complete | Read-only review passed; focused local `main` commit created after all checks; no push/deploy |
+| T12 | Review and create a focused local commit | All | Complete | Previous checkpoint `a27c773`; this delivery adds a new verified commit before the authorized push |
+| T13 | Remove upstream promotion while preserving MIT notices and live ranking data | F08 | Complete | Removed upstream README/footer/funding links; retained license bytes, source audit records and genuine global ranking profile |
+| T14 | Publish generated site through one serialized GitHub Pages workflow | F05 | In progress | Workflow and local verification complete; pending authorized commit/push and remote Pages run |

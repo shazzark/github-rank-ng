@@ -29,3 +29,10 @@
 
 - **Decision:** Exclude the existing `.env` from inventory, docs, generated assets, and commands that print environment values. Use a Node metadata inventory because no Python runtime is installed.
 - **Effect:** Credential validity can only be checked by attempting an authenticated request; no token contents are recorded.
+
+## 2026-11-14 — GitHub Rank NG branding and Pages publishing
+
+- **Decision:** Use `GitHub Rank NG` and `https://github.com/shazzark/github-rank-ng` in public project metadata and remove upstream sponsorship/promotion from the README, generated site, and project-owned lock metadata. Preserve the original MIT `LICENSE` bytes and keep the real public ranking dataset unchanged.
+- **Evidence:** User requested independent branding, unchanged ranking data, preservation of legal notices, and GitHub Pages publishing to `main`.
+- **Effect:** Historical ProjectDNA provenance remains internal documentation. The original username may still occur as a real global ranking record. The seven-day refresh calls the same Pages deployment workflow to avoid a competing artifact-only build.
+- **Supersedes:** The earlier no-deploy decision is superseded by the user's explicit authorization for a Pages deployment and push to `origin/main`; package publishing, releases/tags, and generated-data Git pushes remain disabled.

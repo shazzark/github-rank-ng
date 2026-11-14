@@ -7,29 +7,14 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  refresh:
-    runs-on: ubuntu-latest
-    env:
-      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - run: npm run get
-      - run: npm start
-      - uses: actions/upload-artifact@v4
-        with:
-          name: github-rank-ng-${{ github.run_number }}
-          path: |
-            web/
-            dist/
-          if-no-files-found: error
-          retention-days: 14
+  refresh-and-deploy:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy-pages.yml
+    secrets: inherit

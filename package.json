@@ -1,13 +1,23 @@
 {
-  "name": "github-rank-nigeria",
+  "name": "github-rank-ng",
   "version": "1.0.0",
   "private": true,
-  "description": "Nigeria-focused GitHub developer rankings with a global leaderboard.",
+  "description": "GitHub Rank NG: Nigeria-focused GitHub developer rankings with a global leaderboard.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shazzark/github-rank-ng.git"
+  },
+  "homepage": "https://shazzark.github.io/github-rank-ng/",
+  "bugs": {
+    "url": "https://github.com/shazzark/github-rank-ng/issues"
+  },
+  "author": "shazzark",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "ejsc \"template/*.ejs\" -o web",
     "test": "npm run build && node --test",
+    "verify:rankings": "node scripts/verify-rankings.mjs",
     "get:users": "node lib/getUsers.js",
     "get:users:nigeria": "node lib/getUsersNigeria.js",
     "get:users:info": "node lib/getUserInfo.js",
