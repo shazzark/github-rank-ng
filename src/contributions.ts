@@ -178,6 +178,50 @@ function buildBatchQuery(users: RankedUser[]): { query: string; variables: Recor
   };
 }
 
+async function requestAdaptiveBatch(
+  users: RankedUser[],
+  from: string,
+  to: string,
+  runtime: ContributionRuntime,
+  fallbackRateLimit?: GraphQLResult['rateLimit'],
+): Promise<GraphQLResult> {
+  const built = buildBatchQuery(users);
+  built.variables.from = from;
+  built.variables.to = to;
+  let response: GraphQLResult;
+  try {
+    response = await postGraphQL(built.query, built.variables, runtime);
+    return {
+      ...response,
+      data: Object.fromEntries(users.map((_, index) => [`u${index}`, response.data[`u${index}`]]).concat([['rateLimit', response.data.rateLimit]])),
+    };
+  } catch (error) {
+    // Large contribution connections can trigger transient gateway timeouts; split only server-failed batches.
+    if (!/\((?:502|503|504)\)/.test(String(error))) throw error;
+    if (users.length === 1) {
+      if (!fallbackRateLimit) throw error;
+      const conservativeLimit = {
+        ...fallbackRateLimit,
+        remaining: Math.max(0, fallbackRateLimit.remaining - fallbackRateLimit.cost),
+      };
+      return { rateLimit: conservativeLimit, data: { u0: null, rateLimit: conservativeLimit } };
+    }
+    const midpoint = Math.ceil(users.length / 2);
+    const leftUsers = users.slice(0, midpoint);
+    const rightUsers = users.slice(midpoint);
+    const left = await requestAdaptiveBatch(leftUsers, from, to, runtime, fallbackRateLimit);
+    const right = await requestAdaptiveBatch(rightUsers, from, to, runtime, left.rateLimit);
+    return {
+      rateLimit: { ...right.rateLimit, cost: Math.max(left.rateLimit.cost, right.rateLimit.cost) },
+      data: Object.fromEntries([
+        ...leftUsers.map((_, index) => [`u${index}`, left.data[`u${index}`]]),
+        ...rightUsers.map((_, index) => [`u${midpoint + index}`, right.data[`u${index}`]]),
+        ['rateLimit', right.data.rateLimit],
+      ]),
+    };
+  }
+}
+
 function buildPullRequestPageQuery(): string {
   return `query($login: String!, $from: DateTime!, $to: DateTime!, $after: String!) {
     rateLimit { cost remaining resetAt }
@@ -426,10 +470,26 @@ export async function collectContributionStats(runtime: ContributionRuntime = {}
     }
 
     const batch = due.slice(offset, offset + batchSize);
-    const built = buildBatchQuery(batch);
-    built.variables.from = from;
-    built.variables.to = to;
-    const response = await postGraphQL(built.query, built.variables, runtime);
+    let response: GraphQLResult;
+    try {
+      response = await requestAdaptiveBatch(batch, from, to, runtime, remaining === null
+        ? undefined
+        : { cost: estimatedCost, remaining, resetAt: '' });
+    } catch (error) {
+      if (batch.length !== 1 || !/\((?:502|503|504)\)/.test(String(error))) throw error;
+      const user = batch[0];
+      if (!user) throw error;
+      const unavailable = makeBaseStats(user, from, to, now);
+      unavailable.collectedAt = '';
+      merged.set(user.login.toLowerCase(), unavailable);
+      console.warn(`Contribution statistics unavailable for @${user.login} after a GitHub server error.`);
+      for (const currentUser of unique.values()) {
+        const stats = merged.get(currentUser.login.toLowerCase());
+        if (stats) progress[currentUser.login.toLowerCase()] = stats;
+      }
+      await writeJson(progressPath, progress);
+      continue;
+    }
     remaining = response.rateLimit.remaining;
     estimatedCost = Math.max(estimatedCost, response.rateLimit.cost);
 
@@ -440,9 +500,11 @@ export async function collectContributionStats(runtime: ContributionRuntime = {}
       if (!user || !stats) throw new Error('Contribution response did not map to the requested profiles.');
       const profileData = response.data[`u${index}`];
       if (stats.availability === 'restricted' || stats.availability === 'unavailable') {
-        if (stats.collectedAt) stats.collectedAt = fromNow().toISOString();
+        const collected = Boolean(stats.collectedAt);
+        if (collected) stats.collectedAt = fromNow().toISOString();
+        else console.warn(`Contribution statistics unavailable for @${user.login} after an incomplete GitHub response.`);
         merged.set(user.login.toLowerCase(), stats);
-        refreshed += 1;
+        if (collected) refreshed += 1;
         continue;
       }
       if (isRecord(profileData) && isRecord(profileData.contributionsCollection)) {
@@ -507,7 +569,9 @@ export async function collectContributionStats(runtime: ContributionRuntime = {}
 
   const snapshot = Object.fromEntries([...unique.values()].map((user) => {
     const stats = merged.get(user.login.toLowerCase());
-    return [user.login.toLowerCase(), stats || makeBaseStats(user, from, to, now)];
+    const unavailable = makeBaseStats(user, from, to, now);
+    unavailable.collectedAt = '';
+    return [user.login.toLowerCase(), stats || unavailable];
   }));
   await writeJson(cachePath, snapshot);
   await writeJson(progressPath, {});

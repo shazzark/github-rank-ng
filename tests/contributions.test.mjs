@@ -151,6 +151,76 @@ test('a missing restricted-activity flag withholds every contribution metric', a
   }
 });
 
+test('a transient gateway timeout splits a contribution batch and collects both profiles', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'rank-contrib-'));
+  const previousToken = process.env.ACCESS_TOKEN;
+  process.env.ACCESS_TOKEN = 'test-token';
+  const secondUser = { ...user, id: 42, login: 'second-dev' };
+  let calls = 0;
+  try {
+    await mkdir(path.join(root, 'dist'), { recursive: true });
+    await writeFile(path.join(root, 'dist', 'users.json'), JSON.stringify([user, secondUser]));
+    await writeFile(path.join(root, 'dist', 'users.nigeria.json'), JSON.stringify([]));
+    await collectContributionStats({
+      rootDir: root, batchSize: 2, now: () => new Date('2026-11-20T00:00:00Z'), wait: async () => {},
+      fetcher: async (_url, init) => {
+        calls += 1;
+        if (calls <= 3) return new Response('gateway timeout', { status: 504 });
+        const variables = JSON.parse(init.body).variables;
+        return Response.json({ data: {
+          rateLimit: { cost: 1, remaining: 5000 - calls, resetAt: '2026-11-20T01:00:00Z' },
+          u0: { login: variables.login0, contributionsCollection: collection() },
+        } });
+      },
+    });
+    const snapshot = JSON.parse(await readFile(path.join(root, '.cache', 'contributions.json'), 'utf8'));
+    assert.equal(calls, 5);
+    assert.equal(snapshot[user.login].availability, 'complete');
+    assert.equal(snapshot[secondUser.login].availability, 'complete');
+  } finally {
+    if (previousToken === undefined) delete process.env.ACCESS_TOKEN;
+    else process.env.ACCESS_TOKEN = previousToken;
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('an isolated profile gateway failure does not stop later contribution profiles', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'rank-contrib-'));
+  const previousToken = process.env.ACCESS_TOKEN;
+  process.env.ACCESS_TOKEN = 'test-token';
+  const failedUser = { ...user, id: 42, login: 'slow-dev' };
+  const laterUser = { ...user, id: 43, login: 'later-dev' };
+  let calls = 0;
+  try {
+    await mkdir(path.join(root, 'dist'), { recursive: true });
+    await writeFile(path.join(root, 'dist', 'users.json'), JSON.stringify([user, failedUser, laterUser]));
+    await writeFile(path.join(root, 'dist', 'users.nigeria.json'), JSON.stringify([]));
+    const result = await collectContributionStats({
+      rootDir: root, batchSize: 1, now: () => new Date('2026-11-20T00:00:00Z'), wait: async () => {},
+      fetcher: async (_url, init) => {
+        calls += 1;
+        const variables = JSON.parse(init.body).variables;
+        if (variables.login0 === failedUser.login) return new Response('upstream unavailable', { status: 504 });
+        return Response.json({ data: {
+          rateLimit: { cost: 1, remaining: 5000 - calls, resetAt: '2026-11-20T01:00:00Z' },
+          u0: { login: variables.login0, contributionsCollection: collection() },
+        } });
+      },
+    });
+    const snapshot = JSON.parse(await readFile(path.join(root, '.cache', 'contributions.json'), 'utf8'));
+    assert.equal(calls, 5); // Three attempts for the isolated failing profile.
+    assert.deepEqual(result, { refreshed: 2, reused: 0 });
+    assert.equal(snapshot[user.login].availability, 'complete');
+    assert.equal(snapshot[failedUser.login].collectedAt, '');
+    assert.equal(snapshot[failedUser.login].publicContributionActivity, null);
+    assert.equal(snapshot[laterUser.login].availability, 'complete');
+  } finally {
+    if (previousToken === undefined) delete process.env.ACCESS_TOKEN;
+    else process.env.ACCESS_TOKEN = previousToken;
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('a bounded run persists completed profile checkpoints without creating a publishable complete snapshot', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'rank-contrib-'));
   const previousToken = process.env.ACCESS_TOKEN;
