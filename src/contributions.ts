@@ -184,7 +184,12 @@ async function requestAdaptiveBatch(
   to: string,
   runtime: ContributionRuntime,
   fallbackRateLimit?: GraphQLResult['rateLimit'],
+  deadlineMs?: number,
 ): Promise<GraphQLResult> {
+  const monotonicNow = runtime.monotonicNow || Date.now;
+  if (deadlineMs !== undefined && monotonicNow() >= deadlineMs) {
+    throw new Error('Contribution collection exceeded its 15-minute optional-stage budget.');
+  }
   const built = buildBatchQuery(users);
   built.variables.from = from;
   built.variables.to = to;
@@ -209,8 +214,8 @@ async function requestAdaptiveBatch(
     const midpoint = Math.ceil(users.length / 2);
     const leftUsers = users.slice(0, midpoint);
     const rightUsers = users.slice(midpoint);
-    const left = await requestAdaptiveBatch(leftUsers, from, to, runtime, fallbackRateLimit);
-    const right = await requestAdaptiveBatch(rightUsers, from, to, runtime, left.rateLimit);
+    const left = await requestAdaptiveBatch(leftUsers, from, to, runtime, fallbackRateLimit, deadlineMs);
+    const right = await requestAdaptiveBatch(rightUsers, from, to, runtime, left.rateLimit, deadlineMs);
     return {
       rateLimit: { ...right.rateLimit, cost: Math.max(left.rateLimit.cost, right.rateLimit.cost) },
       data: Object.fromEntries([
@@ -474,7 +479,7 @@ export async function collectContributionStats(runtime: ContributionRuntime = {}
     try {
       response = await requestAdaptiveBatch(batch, from, to, runtime, remaining === null
         ? undefined
-        : { cost: estimatedCost, remaining, resetAt: '' });
+        : { cost: estimatedCost, remaining, resetAt: '' }, startedAt + maxDuration);
     } catch (error) {
       if (batch.length !== 1 || !/\((?:502|503|504)\)/.test(String(error))) throw error;
       const user = batch[0];
