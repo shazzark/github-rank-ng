@@ -17,6 +17,7 @@ export interface ApiRuntime {
   wait?: (milliseconds: number) => Promise<void>;
   maxHttpAttempts?: number;
   maxIncompleteAttempts?: number;
+  requestTimeoutMs?: number;
 }
 
 export class GitHubApiError extends Error {
@@ -78,7 +79,10 @@ export async function requestJson<T>(
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     let response: Response;
     try {
-      response = await fetcher(url, { headers: getHeaders(authenticated) });
+      response = await fetcher(url, {
+        headers: getHeaders(authenticated),
+        signal: AbortSignal.timeout(runtime.requestTimeoutMs ?? 30_000),
+      });
     } catch {
       if (attempt === attempts - 1) {
         throw new GitHubApiError(`GitHub API network request failed for ${url.pathname}`);

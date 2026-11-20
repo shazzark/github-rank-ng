@@ -16,6 +16,7 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 300
     permissions:
       contents: read
       pages: write
@@ -23,8 +24,6 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    env:
-      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -38,7 +37,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore last successful ranking snapshot
+        uses: actions/cache/restore@v4
+        with:
+          path: .baseline
+          key: ranking-baseline-${{ github.run_id }}
+          restore-keys: ranking-baseline-
+
       - name: Require the profile API credential
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         shell: bash
         run: |
           if [[ -z "$ACCESS_TOKEN" ]]; then
@@ -51,6 +59,8 @@ jobs:
 
       - name: Fetch verified rankings and generate HTML
         run: npm run refresh
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Verify ranking output
         run: npm run verify:rankings
@@ -66,3 +76,22 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Save successful ranking snapshot
+        id: save-baseline
+        uses: actions/cache/save@v4
+        continue-on-error: true
+        with:
+          path: .baseline
+          key: ranking-baseline-${{ github.run_id }}
+
+      - name: Report snapshot baseline cache failure
+        if: steps.save-baseline.outcome == 'failure'
+        run: echo "::warning::Pages deployed successfully, but the comparison snapshot cache was not saved. Future change counts may use an older baseline."
+
+      - name: Report refresh failure
+        if: failure() && steps.deployment.outcome != 'success'
+        shell: bash
+        run: |
+          echo "## Ranking refresh failed" >> "$GITHUB_STEP_SUMMARY"
+          echo "The refresh failed before successful deployment. The previously deployed Pages snapshot remains available. Review the failed step logs before rerunning." >> "$GITHUB_STEP_SUMMARY"

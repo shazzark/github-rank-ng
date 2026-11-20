@@ -15,14 +15,14 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "ejsc \"template/*.ejs\" -o web",
+    "start": "ejsc \"template/*.ejs\" -o web && node scripts/copy-assets.mjs",
     "test": "npm run build && node --test",
     "verify:rankings": "node scripts/verify-rankings.mjs",
     "get:users": "node lib/getUsers.js",
     "get:users:nigeria": "node lib/getUsersNigeria.js",
     "get:users:info": "node lib/getUserInfo.js",
     "get": "npm run get:users && npm run get:users:nigeria && npm run get:users:info",
-    "refresh": "npm run build && npm run get && npm run start"
+    "refresh": "npm run build && npm run get && npm run verify:rankings && node scripts/finalize-refresh.mjs && npm run start"
   },
   "license": "MIT",
   "devDependencies": {

@@ -3,6 +3,7 @@ web
 node_modules
 coverage
 .cache
+.baseline
 dist
 .playwright-mcp
 npm-debug.log*

@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { RankedUser, UserProfile, UserSearchResult } from './common/props.js';
 import {
@@ -95,7 +95,9 @@ async function readJson<T>(filePath: string, fallback: T): Promise<T> {
 
 async function writeJson(filePath: string, value: unknown): Promise<void> {
   await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  const temporaryPath = `${filePath}.tmp`;
+  await writeFile(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  await rename(temporaryPath, filePath);
 }
 
 function addProfile(profiles: Map<string, UserProfile>, profile: UserProfile): void {
@@ -294,13 +296,12 @@ export async function enrichUserCandidates(
         }
         // Keep completed profiles and the failed candidate resumable without logging credential data.
         await writeJson(progressPath, uniqueUsers([...profiles.values()]));
-        await writeJson(outputPath, rankProfiles([...profiles.values()]));
+        // Keep incomplete rankings in the private checkpoint area; dist is deployable output.
         await writeJson(cachePath, candidates.slice(index));
         throw error;
       }
       addProfile(profiles, profile);
       await writeJson(progressPath, uniqueUsers([...profiles.values()]));
-      await writeJson(outputPath, rankProfiles([...profiles.values()]));
       if (index < candidates.length - 1) await wait(profileDelay);
     }
 
@@ -308,6 +309,7 @@ export async function enrichUserCandidates(
   }
 
   const ranked = rankProfiles([...profiles.values()]);
+  // Publish a ranking file only after every candidate has been refreshed or confirmed missing.
   await writeJson(outputPath, ranked);
   await writeJson(cachePath, []);
   await writeJson(progressPath, []);

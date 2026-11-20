@@ -1,7 +1,8 @@
     </main>
     <footer class="site-footer">
-      Ranking data comes from public GitHub profiles and search results. On the Nigeria list, profile locations are self-reported; city matches do not prove nationality or current residence, and developers who omit a searchable location may not appear.
+      Ranking methodology: <%= RANKING_META.methodology %> Nigeria locations are self-reported. Change since the previous successful snapshot: <%= RANKING_META.newlyDiscovered %> newly discovered, <%= RANKING_META.retained %> retained, <%= RANKING_META.removed %> removed.
       <a href="https://github.com/shazzark/github-rank-ng" target="_blank" rel="noreferrer">GitHub Rank NG source</a>.
     </footer>
+    <script type="module" src="pagination.js"></script>
   </body>
 </html>

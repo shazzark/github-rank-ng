@@ -24,7 +24,7 @@ npm run get:users:info
 npm start
 ```
 
-`npm run get` runs the two candidate searches followed by profile enrichment. `npm run refresh` builds, refreshes data, and generates both pages. The complete refresh can make hundreds of GitHub API requests and takes time.
+`npm run get` runs fresh global and Nigeria candidate discovery followed by profile enrichment. `npm run refresh` builds, recollects and verifies both rankings, records snapshot freshness and change counts, then generates both pages.
 
 ## Data and output
 
@@ -37,9 +37,9 @@ npm start
 
 Nigeria discovery searches `location:Nigeria` and a maintained set of Nigerian city names (including Lagos, Abuja, Enugu, Port Harcourt, Ibadan and Kano), with a default minimum of 100 followers. Set `MIN_FOLLOWERS` to change the Nigeria threshold; `GLOBAL_MIN_FOLLOWERS` controls the global threshold (default 1,000). GitHub user search exposes at most 1,000 results per query, so results are capped and may be incomplete. The pipeline merges overlapping searches by GitHub user ID and login, then ranks by followers descending with login and ID as stable tie-breakers.
 
-GitHub profile location is self-reported and free text. City matches can include people who are not Nigerian, and Nigerian developers may omit a location or use an unsearched spelling. The ranking is discovery, not proof of nationality, residence, or a complete census. The result list contains only profiles returned by GitHub and successfully enriched from its public profile API.
+GitHub profile location is self-reported and free text. City matches can include people who are not Nigerian, and Nigerian developers may omit a location or use an unsearched spelling. The ranking is discovery, not proof of nationality, residence, or a complete census. The result list contains only profiles returned by GitHub and successfully enriched from its public profile API. Each generated page reports the last successful collection time, profile total, ranking method, and new/retained/removed counts against the previous successful snapshot.
 
-Open `web/index.html` locally after `npm start`. Pushes to `main`, manual runs, and the seven-day scheduled refresh publish the generated `web/` directory through GitHub Pages. Configure the `ACCESS_TOKEN` Actions secret for live profile enrichment. The workflow validates both ranking JSON files before uploading the site artifact; it never publishes `.env`, caches, or source files as website content. API search requests are paced, incomplete results are retried, and rate-limit responses honor GitHub retry hints; if a refresh is interrupted, cached candidates and completed profiles let it resume.
+Open `web/index.html` locally after `npm run refresh`. Pushes to `main`, manual runs, and the daily 02:00 UTC scheduled refresh publish the generated `web/` directory through GitHub Pages. Configure the `ACCESS_TOKEN` Actions secret for live profile enrichment. The workflow validates both ranking JSON files before generating and uploading the site artifact; it never publishes `.env`, caches, or source files as website content. API search requests are paced, incomplete results and transient failures are retried, and rate-limit responses honor GitHub retry hints. An interrupted run fails visibly and leaves the last Pages deployment intact; public candidate/profile checkpoints remain available within the run workspace for recovery.
 
 ## License and attribution
 

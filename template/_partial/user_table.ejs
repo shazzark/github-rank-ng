@@ -6,6 +6,11 @@
           </div>
           <a class="source-link" href="<%= searchUrl %>" target="_blank" rel="noreferrer">View GitHub search ↗</a>
         </div>
+        <div class="table-tools">
+          <label for="user-search">Search usernames</label>
+          <input id="user-search" type="search" autocomplete="off" placeholder="Search all developers" />
+          <p id="result-summary" aria-live="polite"><%= users.length.toLocaleString('en-NG') %> results</p>
+        </div>
         <div class="table-scroll" role="region" aria-label="Developer ranking table" tabindex="0">
           <table>
             <thead>
@@ -21,7 +26,7 @@
             </thead>
             <tbody>
               <% users.forEach(function(user, idx) { %>
-                <tr>
+                <tr data-username="<%= user.login.toLowerCase() %>">
                   <td class="rank"><%= user.rank || idx + 1 %></td>
                   <td>
                     <div class="user-cell">
@@ -42,4 +47,11 @@
             </tbody>
           </table>
         </div>
+        <nav class="pagination" aria-label="Leaderboard pages" hidden>
+          <button type="button" data-page-action="previous">Previous</button>
+          <div class="page-numbers" aria-label="Page numbers"></div>
+          <button type="button" data-page-action="next">Next</button>
+          <span class="page-indicator" aria-live="polite"></span>
+        </nav>
+        <p class="empty-search" hidden>No developers match that username.</p>
       </section>

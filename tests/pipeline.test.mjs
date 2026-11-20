@@ -134,6 +134,7 @@ test('enrichment resumes after interruption and ranks deterministically with con
       },
     }), /simulated interruption/);
     assert.equal(calls, 2);
+    await assert.rejects(readFile(path.join(rootDir, 'dist/users.nigeria.json'), 'utf8'), { code: 'ENOENT' });
 
     const resumed = await enrichUserCandidates('nigeria', [], {
       rootDir, profileRequestDelayMs: 0,
