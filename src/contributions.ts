@@ -54,6 +54,12 @@ function retryDelay(response: Response, attempt: number): number {
     : 1000 * 2 ** attempt;
 }
 
+function isRetryableBatchFailure(error: unknown): boolean {
+  const message = String(error);
+  return /\((?:502|503|504)\)/.test(message)
+    || /Something went wrong while executing your query/i.test(message);
+}
+
 async function postGraphQL(
   query: string,
   variables: Record<string, unknown>,
@@ -202,7 +208,7 @@ async function requestAdaptiveBatch(
     };
   } catch (error) {
     // Large contribution connections can trigger transient gateway timeouts; split only server-failed batches.
-    if (!/\((?:502|503|504)\)/.test(String(error))) throw error;
+    if (!isRetryableBatchFailure(error)) throw error;
     if (users.length === 1) {
       if (!fallbackRateLimit) throw error;
       const conservativeLimit = {
@@ -481,7 +487,7 @@ export async function collectContributionStats(runtime: ContributionRuntime = {}
         ? undefined
         : { cost: estimatedCost, remaining, resetAt: '' }, startedAt + maxDuration);
     } catch (error) {
-      if (batch.length !== 1 || !/\((?:502|503|504)\)/.test(String(error))) throw error;
+      if (batch.length !== 1 || !isRetryableBatchFailure(error)) throw error;
       const user = batch[0];
       if (!user) throw error;
       const unavailable = makeBaseStats(user, from, to, now);

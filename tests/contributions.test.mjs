@@ -184,6 +184,39 @@ test('a transient gateway timeout splits a contribution batch and collects both 
   }
 });
 
+test('an internal GraphQL execution error splits the batch before collecting profiles', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'rank-contrib-'));
+  const previousToken = process.env.ACCESS_TOKEN;
+  process.env.ACCESS_TOKEN = 'test-token';
+  const secondUser = { ...user, id: 42, login: 'second-dev' };
+  let calls = 0;
+  try {
+    await mkdir(path.join(root, 'dist'), { recursive: true });
+    await writeFile(path.join(root, 'dist', 'users.json'), JSON.stringify([user, secondUser]));
+    await writeFile(path.join(root, 'dist', 'users.nigeria.json'), JSON.stringify([]));
+    await collectContributionStats({
+      rootDir: root, batchSize: 2, now: () => new Date('2026-11-20T00:00:00Z'), wait: async () => {},
+      fetcher: async (_url, init) => {
+        calls += 1;
+        if (calls === 1) return Response.json({ errors: [{ message: 'Something went wrong while executing your query on 2026-11-20T00:00:00Z. E421' }] });
+        const variables = JSON.parse(init.body).variables;
+        return Response.json({ data: {
+          rateLimit: { cost: 1, remaining: 5000 - calls, resetAt: '2026-11-20T01:00:00Z' },
+          u0: { login: variables.login0, contributionsCollection: collection() },
+        } });
+      },
+    });
+    const snapshot = JSON.parse(await readFile(path.join(root, '.cache', 'contributions.json'), 'utf8'));
+    assert.equal(calls, 3);
+    assert.equal(snapshot[user.login].availability, 'complete');
+    assert.equal(snapshot[secondUser.login].availability, 'complete');
+  } finally {
+    if (previousToken === undefined) delete process.env.ACCESS_TOKEN;
+    else process.env.ACCESS_TOKEN = previousToken;
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('an isolated profile gateway failure does not stop later contribution profiles', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'rank-contrib-'));
   const previousToken = process.env.ACCESS_TOKEN;
