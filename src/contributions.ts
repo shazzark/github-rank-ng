@@ -5,7 +5,7 @@ import type { ContributionStats } from './common/contributions.js';
 import type { RankedUser } from './common/props.js';
 
 const GRAPHQL_ENDPOINT = 'https://api.github.com/graphql';
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 5;
 const PAGE_SIZE = 100;
 const MAX_PULL_REQUEST_PAGES = 10;
 const MAX_STAGE_DURATION_MS = 15 * 60 * 1000;

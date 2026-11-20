@@ -8,8 +8,8 @@
 | T04 | Implement global/Nigeria EJS pages | F01, F02, F04 | Complete | Both pages generated; Playwright desktop/mobile checks passed |
 | T05 | Update package metadata, docs, license, and environment example | F05 | Complete | README, `.env.example`, preserved MIT license, private npm package |
 | T06 | Restrict workflows to safe main CI and scheduled artifact refresh | F05 | Complete | Source audit passed; workflow runtime depends on GitHub Actions and repository secret |
-| T13 | Find My Rank across global and Nigeria results with accessible detail panel | F09 | In progress | Unit suite and local desktop/mobile Playwright fixture checks pass; remote Pages verification remains |
-| T14 | Add optional bounded GraphQL public contribution snapshots | F10 | In progress | Mapping, failure, freshness and checkpoint tests pass; local network blocked live API verification |
+| T13 | Find My Rank across global and Nigeria results with accessible detail panel | F09 | In progress | Unit suite and local desktop/mobile Playwright fixture checks pass; remote Pages deployment retry pending |
+| T14 | Add optional bounded GraphQL public contribution snapshots | F10 | In progress | Mapping, failure, freshness and checkpoint tests pass; remote GraphQL returned HTTP 502 in run 44813044288 |
 | T07 | Install, compile, run fixture pipeline, try live fetch, generate and inspect HTML | F01â€“F05 | Complete | npm install/ci, build, fixture recovery, live API, EJS, browser checks passed; Actions runtime not run |
 | T08 | Reproduce the old 14-profile query and inspect search metadata | F07 | Complete | Current exact old query: 14 complete results; old response metadata was not retained |
 | T09 | Implement multi-location search, configurable thresholds, pagination, retry, and identity deduplication | F02, F03, F07 | Complete | Metadata pagination, retry and incomplete-result handling, per-page search checkpoints, ID/login dedupe, deterministic follower ranks |

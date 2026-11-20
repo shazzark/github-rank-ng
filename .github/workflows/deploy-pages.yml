@@ -7,6 +7,7 @@ on:
   workflow_call:
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -19,6 +20,7 @@ jobs:
     timeout-minutes: 300
     permissions:
       contents: read
+      actions: read
       pages: write
       id-token: write
     environment:
@@ -72,6 +74,30 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: web/
+
+      - name: Wait for the Pages artifact to become visible
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          artifacts_url="https://api.github.com/repos/${REPOSITORY}/actions/runs/${RUN_ID}/artifacts?per_page=100"
+          for attempt in {1..12}; do
+            if curl --fail --silent --show-error \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "$artifacts_url" \
+              | jq -e 'any(.artifacts[]?; .name == "github-pages" and .expired == false and .size_in_bytes > 0)' >/dev/null; then
+              echo "The non-empty GitHub Pages artifact is available."
+              exit 0
+            fi
+            echo "Waiting for the uploaded GitHub Pages artifact (attempt ${attempt}/12)."
+            sleep 5
+          done
+          echo "::error::The uploaded GitHub Pages artifact was not visible in the Actions API after 60 seconds."
+          exit 1
 
       - name: Deploy to GitHub Pages
         id: deployment
