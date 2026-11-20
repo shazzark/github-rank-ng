@@ -184,6 +184,15 @@ function buildBatchQuery(users: RankedUser[]): { query: string; variables: Recor
   };
 }
 
+async function readRateLimit(runtime: ContributionRuntime): Promise<GraphQLResult['rateLimit']> {
+  const response = await postGraphQL(
+    'query { rateLimit { cost remaining resetAt } }',
+    {},
+    runtime,
+  );
+  return response.rateLimit;
+}
+
 async function requestAdaptiveBatch(
   users: RankedUser[],
   from: string,
@@ -196,6 +205,9 @@ async function requestAdaptiveBatch(
   if (deadlineMs !== undefined && monotonicNow() >= deadlineMs) {
     throw new Error('Contribution collection exceeded its 15-minute optional-stage budget.');
   }
+  if (fallbackRateLimit && fallbackRateLimit.remaining < fallbackRateLimit.cost + (runtime.rateLimitReserve ?? RATE_LIMIT_RESERVE)) {
+    throw new Error('Contribution collection paused to preserve GitHub GraphQL rate-limit headroom.');
+  }
   const built = buildBatchQuery(users);
   built.variables.from = from;
   built.variables.to = to;
@@ -207,20 +219,20 @@ async function requestAdaptiveBatch(
       data: Object.fromEntries(users.map((_, index) => [`u${index}`, response.data[`u${index}`]]).concat([['rateLimit', response.data.rateLimit]])),
     };
   } catch (error) {
-    // Large contribution connections can trigger transient gateway timeouts; split only server-failed batches.
+    // Large contribution connections can trigger transient HTTP or GraphQL execution failures; split only those batches.
     if (!isRetryableBatchFailure(error)) throw error;
+    const knownRateLimit = fallbackRateLimit || await readRateLimit(runtime);
     if (users.length === 1) {
-      if (!fallbackRateLimit) throw error;
       const conservativeLimit = {
-        ...fallbackRateLimit,
-        remaining: Math.max(0, fallbackRateLimit.remaining - fallbackRateLimit.cost),
+        ...knownRateLimit,
+        remaining: Math.max(0, knownRateLimit.remaining - knownRateLimit.cost),
       };
       return { rateLimit: conservativeLimit, data: { u0: null, rateLimit: conservativeLimit } };
     }
     const midpoint = Math.ceil(users.length / 2);
     const leftUsers = users.slice(0, midpoint);
     const rightUsers = users.slice(midpoint);
-    const left = await requestAdaptiveBatch(leftUsers, from, to, runtime, fallbackRateLimit, deadlineMs);
+    const left = await requestAdaptiveBatch(leftUsers, from, to, runtime, knownRateLimit, deadlineMs);
     const right = await requestAdaptiveBatch(rightUsers, from, to, runtime, left.rateLimit, deadlineMs);
     return {
       rateLimit: { ...right.rateLimit, cost: Math.max(left.rateLimit.cost, right.rateLimit.cost) },

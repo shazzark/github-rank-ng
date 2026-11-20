@@ -174,7 +174,7 @@ test('a transient gateway timeout splits a contribution batch and collects both 
       },
     });
     const snapshot = JSON.parse(await readFile(path.join(root, '.cache', 'contributions.json'), 'utf8'));
-    assert.equal(calls, 5);
+    assert.equal(calls, 6);
     assert.equal(snapshot[user.login].availability, 'complete');
     assert.equal(snapshot[secondUser.login].availability, 'complete');
   } finally {
@@ -207,7 +207,7 @@ test('an internal GraphQL execution error splits the batch before collecting pro
       },
     });
     const snapshot = JSON.parse(await readFile(path.join(root, '.cache', 'contributions.json'), 'utf8'));
-    assert.equal(calls, 3);
+    assert.equal(calls, 4);
     assert.equal(snapshot[user.login].availability, 'complete');
     assert.equal(snapshot[secondUser.login].availability, 'complete');
   } finally {
@@ -269,7 +269,7 @@ test('a bounded run persists completed profile checkpoints without creating a pu
       now: () => new Date('2026-11-20T00:00:00Z'), wait: async () => {},
       fetcher: async (_url, init) => {
         const variables = JSON.parse(init.body).variables;
-        clock += 2;
+        if (JSON.parse(init.body).query.includes('user(login:')) clock += 2;
         return Response.json({ data: {
           rateLimit: { cost: 1, remaining: 5000, resetAt: '2026-11-20T01:00:00Z' },
           u0: { login: variables.login0, contributionsCollection: collection() },
