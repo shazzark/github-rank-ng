@@ -2,10 +2,14 @@
   type: 'nigeria',
   title: 'GitHub developers in Nigeria',
   description: 'A community leaderboard of public GitHub profiles whose self-reported location matches Nigeria or a Nigerian city, ranked by followers. Location is not proof of nationality or residence.',
-  users: USERS_NIGERIA
+  users: USERS_NIGERIA,
+  RANKING_META: RANKING_META
 }); %>
 <%- include('./_partial/user_table', {
+  type: 'nigeria',
   users: USERS_NIGERIA,
+  CONTRIBUTION_STATS: CONTRIBUTION_STATS,
+  RANKING_META: RANKING_META,
   searchUrl: 'https://github.com/search?q=followers%3A%3E%3D100+location%3ANigeria&type=Users'
 }); %>
 <%- include('./_partial/footer'); %>

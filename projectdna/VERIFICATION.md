@@ -1,5 +1,16 @@
 # Verification log
 
+## Find My Rank and contribution statistics implementation (2026-11-20)
+
+- Added exact, normalized username lookup across the global and Nigeria generated datasets, cross-board ranks, table-page navigation and shareable `?user=` links. Unknown usernames receive a clear explanation that absence is not evidence about developer status or nationality.
+- Added static profile detail content and optional 365-day public contribution metrics from GitHub GraphQL. REST `GET /users/{login}` profile enrichment remains the source for follower and public repository counts.
+- Contribution enrichment uses sequential batches of ten, bounded to 15 minutes, observes GitHub's response-reported GraphQL point cost and 250-point reserve, retries transient errors, reuses per-user records for seven days, and checkpoints validated public results in `.baseline/contributions-progress.json`. Failure does not block valid follower ranking deployment.
+- API/runtime impact estimate: up to 2,000 deduplicated leaderboard profiles at the current 1,000-per-board cap means about 200 base GraphQL calls per full initial pass, plus paginated PR contribution connections. GitHub ordinarily gives authenticated user GraphQL requests 5,000 points/hour, and the collector stops with a 250-point reserve using response-reported query costs. Assuming 0.5–2 seconds per response, the base request latency estimate is roughly 2–7 minutes; extra pages/retries are bounded by a 15-minute optional-stage budget. The optional stage can add at most that bounded runtime to the existing full refresh; daily checkpoints and seven-day reuse avoid repeating the entire pass each day. This is a planning estimate; no complete production GraphQL pass has been measured.
+- `npm test`: passed 21 tests, including username matching, pagination navigation, share links and URL allowlists; GraphQL metric mapping, restricted/missing fields, freshness, checkpointing, transient retry and rate-limit failure; EJS escaping; and existing ranking pipeline checks. `npm run build` is included in this command and passed.
+- Generated fixture-page Playwright checks at 390px and 1440px verified responsive fit, the full-dataset search, direct `?user=` navigation to global rank 105/page 3 and Nigeria rank 55/page 2, highlight, fresh metric period and timestamp, unknown-user explanation, and empty search state. These used synthetic local fixture data, not public rankings.
+- One low-volume live GraphQL request was attempted but the local runtime could not reach the network (`GitHub GraphQL network request failed`). Official GitHub schema documentation confirms the requested `contributionsCollection`, restricted-activity flag, contribution totals and repository groups; live Actions execution is still required to verify the actual authenticated API response.
+- Remote commit, deployment and Pages verification have not yet been completed for this feature.
+
 ## Baseline
 
 - Date: 2026-11-14 (environment local time, Africa/Lagos).

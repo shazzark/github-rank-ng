@@ -6,6 +6,19 @@
           </div>
           <a class="source-link" href="<%= searchUrl %>" target="_blank" rel="noreferrer">View GitHub search ↗</a>
         </div>
+        <section class="find-rank-panel" aria-labelledby="find-rank-title">
+          <h2 id="find-rank-title">Find My Rank</h2>
+          <p>Look up an exact GitHub username across both leaderboards.</p>
+          <form id="find-rank-form" novalidate>
+            <label for="find-rank-username">GitHub username</label>
+            <div class="find-rank-controls">
+              <input id="find-rank-username" name="username" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="username or @username" />
+              <button type="submit">Find rank</button>
+            </div>
+          </form>
+          <div id="find-rank-result" class="find-rank-result" role="status" aria-live="polite" hidden></div>
+          <script id="other-ranking-data" type="application/json"><%- JSON.stringify(OTHER_USERS).replace(/</g, '\\u003c') %></script>
+        </section>
         <div class="table-tools">
           <label for="user-search">Search usernames</label>
           <input id="user-search" type="search" autocomplete="off" placeholder="Search all developers" />
@@ -26,13 +39,15 @@
             </thead>
             <tbody>
               <% users.forEach(function(user, idx) { %>
-                <tr data-username="<%= user.login.toLowerCase() %>">
+                <% const profileHref = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/?$/.test(user.html_url) ? user.html_url : `https://github.com/${encodeURIComponent(user.login)}`; %>
+                <% const avatarHref = /^https:\/\/avatars\.githubusercontent\.com\//.test(user.avatar_url) ? user.avatar_url : 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'; %>
+                <tr data-username="<%= user.login.toLowerCase() %>" data-rank="<%= user.rank || idx + 1 %>" data-global-rank="<%= RANKING_META.globalRankByLogin[user.login.toLowerCase()] || '' %>" data-nigeria-rank="<%= RANKING_META.nigeriaRankByLogin[user.login.toLowerCase()] || '' %>" data-profile-url="<%= profileHref %>" data-avatar-url="<%= avatarHref %>" data-followers="<%= user.followers || 0 %>" data-public-repos="<%= user.public_repos || 0 %>" data-contribution-stats="<%= JSON.stringify(CONTRIBUTION_STATS[user.login.toLowerCase()] || null) %>">
                   <td class="rank"><%= user.rank || idx + 1 %></td>
                   <td>
                     <div class="user-cell">
-                      <img class="avatar" src="<%= user.avatar_url %>&s=68" width="34" height="34" loading="lazy" alt="" />
+                      <img class="avatar" src="<%= avatarHref %>&s=68" width="34" height="34" loading="lazy" alt="" />
                       <div>
-                        <a class="user-link" href="<%= user.html_url %>" target="_blank" rel="noreferrer">@<%= user.login %></a>
+                        <a class="user-link" href="<%= profileHref %>" target="_blank" rel="noopener noreferrer">@<%= user.login %></a>
                         <% if (user.name) { %><div class="user-name"><%= user.name %></div><% } %>
                       </div>
                     </div>

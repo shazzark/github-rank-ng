@@ -2,10 +2,14 @@
   type: 'global',
   title: 'GitHub developers, ranked globally',
   description: 'Explore public GitHub profiles from around the world, ordered by follower count. Switch to the Nigeria leaderboard to discover developers in the local community.',
-  users: USERS
+  users: USERS,
+  RANKING_META: RANKING_META
 }); %>
 <%- include('./_partial/user_table', {
+  type: 'global',
   users: USERS,
+  CONTRIBUTION_STATS: CONTRIBUTION_STATS,
+  RANKING_META: RANKING_META,
   searchUrl: 'https://github.com/search?q=followers%3A%3E1000&type=Users'
 }); %>
 <%- include('./_partial/footer'); %>

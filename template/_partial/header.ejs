@@ -59,6 +59,26 @@
       .pagination button:disabled { opacity: .45; cursor: not-allowed; }
       .page-indicator { margin-left: 8px; color: var(--muted); font-size: 12px; }
       .empty-search { padding: 20px; color: var(--muted); text-align: center; }
+      .find-rank-panel { padding: 18px 22px; border-bottom: 1px solid var(--line); background: linear-gradient(120deg, #fff, #f8fbf8); }
+      .find-rank-panel h2 { margin: 0; font-size: 15px; }
+      .find-rank-panel > p { margin: 5px 0 12px; color: var(--muted); font-size: 12px; }
+      .find-rank-panel label { display: block; margin-bottom: 6px; color: var(--ink); font-size: 12px; font-weight: 650; }
+      .find-rank-controls { display: flex; max-width: 520px; gap: 8px; }
+      .find-rank-controls input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+      .find-rank-controls button { padding: 10px 16px; border: 0; border-radius: 8px; background: var(--green); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+      .find-rank-controls button:hover { background: var(--green-deep); }
+      .find-rank-result { max-width: 720px; margin-top: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+      .find-rank-result h3 { margin: 0 0 8px; font-size: 14px; }
+      .find-rank-result p { margin: 5px 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+      .find-rank-profile { display: flex; align-items: center; gap: 10px; }
+      .find-rank-profile img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+      .find-rank-profile a, .share-rank-link { color: var(--green-deep); font-weight: 700; }
+      .contribution-details { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+      .contribution-details h4 { margin: 0 0 8px; font-size: 13px; }
+      .contribution-details dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 14px; margin: 0; font-size: 12px; }
+      .contribution-details dt { color: var(--muted); }
+      .contribution-details dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 650; }
+      .rank-match { outline: 3px solid var(--gold); outline-offset: -3px; background: var(--green-pale) !important; }
       main { max-width: 1180px; margin: 0 auto; padding: 24px 28px 48px; }
       .table-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); box-shadow: 0 10px 28px rgb(20 54 33 / 4%); }
       .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 19px 22px; border-bottom: 1px solid var(--line); }
@@ -89,6 +109,10 @@
         .ranking-nav a { padding: 8px 11px; font-size: 12px; }
         main { padding: 16px 15px 34px; }
         .panel-heading { align-items: flex-start; padding: 16px; }
+        .find-rank-panel { padding: 16px; }
+        .find-rank-controls { flex-direction: column; }
+        .find-rank-controls button { min-height: 42px; }
+        .contribution-details dl { grid-template-columns: minmax(0, 1fr) auto; gap: 7px 9px; font-size: 11px; }
         .table-tools { align-items: stretch; flex-direction: column; padding: 14px 16px; }
         .table-tools input { width: 100%; }
         .table-tools p { margin: 0; }
