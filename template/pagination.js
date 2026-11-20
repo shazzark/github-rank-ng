@@ -165,7 +165,9 @@ function initializeFindRank(rows, showUser) {
       const unavailable = document.createElement('p');
       unavailable.textContent = stats?.availability === 'restricted'
         ? 'Contribution statistics are unavailable because the public response indicates restricted activity.'
-        : 'Contribution statistics have not been collected for this profile.';
+        : stats?.availability === 'unavailable'
+          ? 'The public API response did not provide enough verifiable contribution data. No activity counts are shown.'
+          : 'Contribution statistics have not been collected for this profile.';
       activity.append(unavailable);
     } else {
       const metricNames = [

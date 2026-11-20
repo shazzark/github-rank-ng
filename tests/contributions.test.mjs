@@ -123,6 +123,34 @@ test('GraphQL retries transient failures and fails closed on exhausted rate limi
   }
 });
 
+test('a missing restricted-activity flag withholds every contribution metric', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'rank-contrib-'));
+  const previousToken = process.env.ACCESS_TOKEN;
+  process.env.ACCESS_TOKEN = 'test-token';
+  try {
+    await setupProject(root);
+    await collectContributionStats({
+      rootDir: root, now: () => new Date('2026-11-20T00:00:00Z'), wait: async () => {},
+      fetcher: async () => Response.json({ data: {
+        rateLimit: { cost: 1, remaining: 5000, resetAt: '2026-11-20T01:00:00Z' },
+        u0: { login: user.login, contributionsCollection: collection({ hasAnyRestrictedContributions: undefined }) },
+      } }),
+    });
+    const snapshot = JSON.parse(await readFile(path.join(root, '.cache', 'contributions.json'), 'utf8'));
+    const stats = snapshot[user.login];
+    assert.equal(stats.availability, 'unavailable');
+    assert.equal(stats.pullRequestsMerged, null);
+    assert.equal(stats.verifiedExternalOpenSourceRepositories, null);
+    for (const field of ['publicContributionActivity', 'pullRequestsOpened', 'issuesOpened', 'pullRequestsReviewed', 'externalPublicRepositories']) {
+      assert.equal(stats[field], null);
+    }
+  } finally {
+    if (previousToken === undefined) delete process.env.ACCESS_TOKEN;
+    else process.env.ACCESS_TOKEN = previousToken;
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('a bounded run persists completed profile checkpoints without creating a publishable complete snapshot', async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'rank-contrib-'));
   const previousToken = process.env.ACCESS_TOKEN;

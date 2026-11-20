@@ -439,6 +439,12 @@ export async function collectContributionStats(runtime: ContributionRuntime = {}
       const stats = batchStats[index];
       if (!user || !stats) throw new Error('Contribution response did not map to the requested profiles.');
       const profileData = response.data[`u${index}`];
+      if (stats.availability === 'restricted' || stats.availability === 'unavailable') {
+        if (stats.collectedAt) stats.collectedAt = fromNow().toISOString();
+        merged.set(user.login.toLowerCase(), stats);
+        refreshed += 1;
+        continue;
+      }
       if (isRecord(profileData) && isRecord(profileData.contributionsCollection)) {
         const collection = profileData.contributionsCollection;
         let page = pullRequestNodes(collection.pullRequestContributions);
