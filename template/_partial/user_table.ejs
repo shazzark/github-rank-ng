@@ -6,24 +6,18 @@
           </div>
           <a class="source-link" href="<%= searchUrl %>" target="_blank" rel="noreferrer">View GitHub search ↗</a>
         </div>
-        <section class="find-rank-panel" aria-labelledby="find-rank-title">
-          <h2 id="find-rank-title">Find My Rank</h2>
-          <p>Look up an exact GitHub username across both leaderboards.</p>
-          <form id="find-rank-form" novalidate>
-            <label for="find-rank-username">GitHub username</label>
+        <div class="table-tools">
+          <form id="leaderboard-search-form" novalidate>
+            <label for="user-search">Search usernames or find a rank</label>
             <div class="find-rank-controls">
-              <input id="find-rank-username" name="username" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="username or @username" />
+              <input id="user-search" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="username or @username" />
               <button type="submit">Find rank</button>
             </div>
           </form>
-          <div id="find-rank-result" class="find-rank-result" role="status" aria-live="polite" hidden></div>
-          <script id="other-ranking-data" type="application/json"><%- JSON.stringify(OTHER_USERS).replace(/</g, '\\u003c') %></script>
-        </section>
-        <div class="table-tools">
-          <label for="user-search">Search usernames</label>
-          <input id="user-search" type="search" autocomplete="off" placeholder="Search all developers" />
           <p id="result-summary" aria-live="polite"><%= users.length.toLocaleString('en-NG') %> results</p>
         </div>
+        <div id="find-rank-result" class="find-rank-result" role="status" aria-live="polite" hidden></div>
+        <script id="other-ranking-data" type="application/json"><%- JSON.stringify(OTHER_USERS).replace(/</g, '\\u003c') %></script>
         <div class="table-scroll" role="region" aria-label="Developer ranking table" tabindex="0">
           <table>
             <thead>

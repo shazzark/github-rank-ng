@@ -33,6 +33,7 @@ test('username filtering searches the entire dataset and pagination uses filtere
   assert.equal(page.total, 3);
   assert.equal(page.pageCount, 1);
   assert.equal(page.items[0].rank, 10);
+  assert.equal(filterUsers(users, '@DEVELOPER-10').length, 3);
 });
 
 test('empty searches have no current page and no result rows', () => {
@@ -95,5 +96,9 @@ test('leaderboard rendering escapes profile content, script JSON and rejects uns
   assert.doesNotMatch(html, /href="javascript:/);
   assert.doesNotMatch(html, /src="data:text\/html/);
   assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
+  assert.match(html, /id="leaderboard-search-form"/);
+  assert.match(html, /Search usernames or find a rank/);
+  assert.equal((html.match(/type="search"/g) || []).length, 1);
+  assert.doesNotMatch(html, /find-rank-username|find-rank-form/);
   assert.match(html, /\\u003c\/script>/);
 });

@@ -21,6 +21,13 @@
 - Live HTML inspection found a profile record marked `unavailable` with PR-derived counts still serialized after the restricted-activity flag was missing. The collector now stops metric processing for `restricted` or `unavailable` responses; a regression test asserts all metrics remain null when the privacy flag is missing. The detail panel now explains that the response was not verifiable instead of saying no collection occurred.
 - The previous Pages deployment remains the live site until a run successfully publishes this commit. Remote deployment and live feature checks remain pending.
 
+## Subsequent live refresh and search consolidation (2026-11-21)
+
+- Commit `28505a347d831fc178e468aa958074464158792b` is on `origin/main`. Pages run [44835959468](https://github.com/shazzark/github-rank-ng/actions/runs/44835959468) completed successfully and published the complete verified follower rankings.
+- Live Playwright inspection at `https://shazzark.github.io/github-rank-ng/` reported **768 Global** profiles, **50 per page**, the previously deployed separate rank lookup and table search inputs, and data freshness **21 Nov 2026, 00:35 UTC**. The detail panel for `@torvalds` showed Global rank 1, followers and public repositories, and did not invent contribution counts.
+- Contribution enrichment still did not complete: Actions reported that GitHub GraphQL requested a rate-limit wait beyond the optional collection budget. The site retained 13 `unavailable` and 2 `partial` per-profile records; this run added no verified full contribution snapshot. The follower ranking and Pages deployment succeeded. Earlier batch recovery attempts observed HTTP 502/504 and GitHub's internal GraphQL `E421` error. `gh auth status` locally reports an invalid CLI token, so Actions were inspected through the connected GitHub integration.
+- Consolidated the table's live username filter and exact cross-board rank lookup into one accessible search field. Local tests pass (25 tests); Playwright confirmed exact Global rank 105 navigation to page 3, Nigeria rank 55 to page 2 through `?user=`, partial `@` search, unknown-user explanation, one search field, 50 visible rows, and no horizontal page overflow at 390px or 1440px. This UI change has not yet been pushed or deployed.
+
 ## Baseline
 
 - Date: 2026-11-14 (environment local time, Africa/Lagos).

@@ -7,7 +7,7 @@ export function paginate(items, page, pageSize = 50) {
 }
 
 export function filterUsers(rows, query) {
-  const normalized = query.trim().toLowerCase();
+  const normalized = query.trim().replace(/^@/, '').toLowerCase();
   return rows.filter((row) => row.username.toLowerCase().includes(normalized));
 }
 
@@ -103,8 +103,8 @@ function otherRankingUsers() {
 }
 
 function initializeFindRank(rows, showUser) {
-  const form = document.querySelector('#find-rank-form');
-  const input = document.querySelector('#find-rank-username');
+  const form = document.querySelector('#leaderboard-search-form');
+  const input = document.querySelector('#user-search');
   const result = document.querySelector('#find-rank-result');
   if (!form || !input || !result) return;
 
@@ -124,6 +124,11 @@ function initializeFindRank(rows, showUser) {
     const match = navigateToRankedUser(allUsers, normalized);
     const user = match?.user || null;
     if (!user) {
+      const usernameMatches = filterUsers(rows, rawUsername);
+      if (usernameMatches.length > 0) {
+        result.textContent = `No exact rank for @${normalized}. Showing ${usernameMatches.length} username match${usernameMatches.length === 1 ? '' : 'es'} on this leaderboard.`;
+        return;
+      }
       result.textContent = `@${normalized} is not currently ranked on the Global or Nigeria leaderboards. Absence from these lists does not mean someone is not a developer or is not Nigerian.`;
       return;
     }
@@ -295,7 +300,12 @@ function initializePagination() {
     }
   }
 
-  input.addEventListener('input', () => { page = 1; render(); });
+  input.addEventListener('input', () => {
+    page = 1;
+    render();
+    document.querySelector('#find-rank-result').hidden = true;
+    for (const row of rows) row.element.classList.remove('rank-match');
+  });
   previous.addEventListener('click', () => { page -= 1; render(); });
   next.addEventListener('click', () => { page += 1; render(); });
   nav.hidden = false;

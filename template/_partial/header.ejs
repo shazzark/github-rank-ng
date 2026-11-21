@@ -50,8 +50,10 @@
       .ranking-nav a.active { background: var(--green); color: #fff; }
       .record-count { color: var(--muted); font-size: 12px; white-space: nowrap; }
       .table-tools { display: flex; align-items: center; gap: 10px; padding: 14px 22px; }
+      .table-tools form { flex: 1; min-width: 0; }
       .table-tools label { color: var(--muted); font-size: 12px; font-weight: 650; }
-      .table-tools input { width: min(100%, 280px); padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+      .table-tools form label { display: block; margin-bottom: 6px; color: var(--ink); }
+      .table-tools input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
       .table-tools p { margin: 0 0 0 auto; color: var(--muted); font-size: 12px; }
       .pagination { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; padding: 14px 18px; border-top: 1px solid var(--line); }
       .pagination button { min-width: 36px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--ink); cursor: pointer; }
@@ -59,10 +61,6 @@
       .pagination button:disabled { opacity: .45; cursor: not-allowed; }
       .page-indicator { margin-left: 8px; color: var(--muted); font-size: 12px; }
       .empty-search { padding: 20px; color: var(--muted); text-align: center; }
-      .find-rank-panel { padding: 18px 22px; border-bottom: 1px solid var(--line); background: linear-gradient(120deg, #fff, #f8fbf8); }
-      .find-rank-panel h2 { margin: 0; font-size: 15px; }
-      .find-rank-panel > p { margin: 5px 0 12px; color: var(--muted); font-size: 12px; }
-      .find-rank-panel label { display: block; margin-bottom: 6px; color: var(--ink); font-size: 12px; font-weight: 650; }
       .find-rank-controls { display: flex; max-width: 520px; gap: 8px; }
       .find-rank-controls input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
       .find-rank-controls button { padding: 10px 16px; border: 0; border-radius: 8px; background: var(--green); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
@@ -109,12 +107,10 @@
         .ranking-nav a { padding: 8px 11px; font-size: 12px; }
         main { padding: 16px 15px 34px; }
         .panel-heading { align-items: flex-start; padding: 16px; }
-        .find-rank-panel { padding: 16px; }
-        .find-rank-controls { flex-direction: column; }
-        .find-rank-controls button { min-height: 42px; }
+        .find-rank-controls button { min-height: 42px; padding: 8px 12px; }
         .contribution-details dl { grid-template-columns: minmax(0, 1fr) auto; gap: 7px 9px; font-size: 11px; }
         .table-tools { align-items: stretch; flex-direction: column; padding: 14px 16px; }
-        .table-tools input { width: 100%; }
+        .table-tools form { width: 100%; }
         .table-tools p { margin: 0; }
         .pagination { gap: 4px; padding: 12px 8px; }
         .pagination button { min-width: 32px; padding: 7px; font-size: 12px; }

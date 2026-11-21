@@ -26,7 +26,7 @@ npm start
 
 `npm run get` runs fresh global and Nigeria candidate discovery followed by profile enrichment. `npm run refresh` builds, recollects and verifies both rankings, records snapshot freshness and change counts, then generates both pages.
 
-Both leaderboards include **Find My Rank**, an exact username lookup across the complete generated global and Nigeria datasets, with links that reopen the result. Contribution details are optional public-data enrichment; they never gate a valid follower-ranking deployment. The detail panel shows when each profile's statistics were collected and reports incomplete or unavailable metrics explicitly.
+Both leaderboards use one username search field for live table filtering and exact **Find My Rank** lookup across the complete generated global and Nigeria datasets. Submit an exact username to show profile details, ranks and a shareable link that reopens the result. Contribution details are optional public-data enrichment; they never gate a valid follower-ranking deployment. The detail panel shows when each profile's statistics were collected and reports incomplete or unavailable metrics explicitly.
 
 ## Data and output
 
