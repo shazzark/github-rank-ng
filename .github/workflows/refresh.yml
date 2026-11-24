@@ -2,7 +2,7 @@ name: Refresh rankings
 
 on:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -14,6 +14,7 @@ permissions:
 jobs:
   refresh-and-deploy:
     permissions:
+      actions: read
       contents: read
       pages: write
       id-token: write
